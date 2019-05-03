@@ -1,0 +1,21 @@
+Index: https...github.com.aws.aws-iot-device-sdk-embedded-C/platform/source/posix/iot_network_openssl.c
+===================================================================
+--- https...github.com.aws.aws-iot-device-sdk-embedded-C.orig/platform/source/posix/iot_network_openssl.c
++++ https...github.com.aws.aws-iot-device-sdk-embedded-C/platform/source/posix/iot_network_openssl.c
+@@ -208,10 +208,15 @@ static int _dnsLookup( const IotNetworkS
+     struct addrinfo * pListHead = NULL, * pAddressInfo = NULL;
+     struct sockaddr * pServer = NULL;
+     socklen_t serverLength = 0;
++    struct addrinfo hints;
++
++    memset(&hints, 0, sizeof hints);
++    hints.ai_family = AF_INET;
++    hints.ai_socktype = SOCK_STREAM;
+ 
+     /* Perform a DNS lookup of host name. */
+     IotLogDebug( "Performing DNS lookup of %s", pServerInfo->pHostName );
+-    status = getaddrinfo( pServerInfo->pHostName, NULL, NULL, &pListHead );
++    status = getaddrinfo( pServerInfo->pHostName, NULL, &hints, &pListHead );
+ 
+     if( status != 0 )
+     {
