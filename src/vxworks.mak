@@ -56,13 +56,14 @@ $(PKG_NAME).build : $(PKG_NAME).configure
 
 $(PKG_NAME).install : $(PKG_NAME).build
 	@$(call echo_action,Installing,$(PKG_NAME))
-	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/platform/source/posix/libiotplatform.a $(VSB_DIR)/usr/lib/common
 	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/third_party/tinycbor/libtinycbor.a $(VSB_DIR)/usr/lib/common
+	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/libiotbase.a $(VSB_DIR)/usr/lib/common
 	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/lib/source/serializer/libiotserializer.a $(VSB_DIR)/usr/lib/common
 	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/lib/source/shadow/libawsiotshadow.a $(VSB_DIR)/usr/lib/common
 	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/lib/source/mqtt/libiotmqtt.a $(VSB_DIR)/usr/lib/common
+	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/lib/source/jobs/libawsiotjobs.a $(VSB_DIR)/usr/lib/common
 	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/lib/source/defender/libawsiotdefender.a $(VSB_DIR)/usr/lib/common
-	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/lib/source/common/libiotcommon.a $(VSB_DIR)/usr/lib/common
+	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/lib/source/common/libawsiotcommon.a $(VSB_DIR)/usr/lib/common
 	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/bin/aws_iot_demo_shadow.vxe $(VSB_DIR)/usr/root/llvm/bin
 	cp $(VSBL_SRC_DIR)/$(PKG_BUILD_DIR)/bin/iot_demo_mqtt.vxe $(VSB_DIR)/usr/root/llvm/bin
 	@$(MAKE_STAMP)
