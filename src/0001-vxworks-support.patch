@@ -1,40 +1,25 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 409d092..1aa9429 100644
+index eab7e01..bcc1026 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -29,6 +29,7 @@ option( IOT_BUILD_CLONE_SUBMODULES
+@@ -50,6 +50,13 @@ if( NOT DEFINED IOT_PLATFORM_NAME )
+         option( IOT_NETWORK_USE_OPENSSL
+                 "Set this to ON to use a network abstraction implemented on OpenSSL. When OFF, the mbed TLS network abstraction is used."
+                 OFF )
++    elseif( ${CMAKE_SYSTEM_NAME} STREQUAL "VxWorks" )
++        set( IOT_PLATFORM_NAME "posix" CACHE STRING "Port to use for building the SDK." )
++
++        # Provide an option to use the OpenSSL network abstraction on VxWorks.
++        option( IOT_NETWORK_USE_OPENSSL
++                "Set this to ON to use a network abstraction implemented on OpenSSL. When OFF, the mbed TLS network abstraction is used."
++                OFF )
+     elseif( ${CMAKE_SYSTEM_NAME} STREQUAL "Windows" )
+         set( IOT_PLATFORM_NAME "win32" CACHE STRING "Port to use for building the SDK." )
  
- # Check for system support.
- list( APPEND SUPPORTED_SYSTEMS "Linux" )
-+list( APPEND SUPPORTED_SYSTEMS "VxWorks" )
- 
- if( NOT ${CMAKE_SYSTEM_NAME} IN_LIST SUPPORTED_SYSTEMS )
-     message( FATAL_ERROR "Unsupported system: ${CMAKE_SYSTEM_NAME}. Currently supported systems are: ${SUPPORTED_SYSTEMS}." )
-@@ -77,6 +78,10 @@ if( ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" )
-     add_definitions( -DIOT_SYSTEM_TYPES_FILE="posix/iot_platform_types_posix.h" )
-     add_subdirectory( platform/source/posix )
- endif()
-+if( ${CMAKE_SYSTEM_NAME} STREQUAL "VxWorks" )
-+    add_definitions( -DIOT_SYSTEM_TYPES_FILE="posix/iot_platform_types_posix.h" )
-+    add_subdirectory( platform/source/posix )
-+endif()
- 
- # Common libraries (linear containers, logging, etc.)
- add_subdirectory( lib/source/common )
-@@ -100,6 +105,9 @@ add_subdirectory( third_party/tinycbor )
- if( ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" )
-     add_subdirectory( demos/app/posix )
- endif()
-+if( ${CMAKE_SYSTEM_NAME} STREQUAL "VxWorks" )
-+    add_subdirectory( demos/app/posix )
-+endif()
- 
- # Test executables.
- if( ${IOT_BUILD_TESTS} )
-diff --git a/platform/source/posix/CMakeLists.txt b/platform/source/posix/CMakeLists.txt
+diff --git a/platform/ports/posix/CMakeLists.txt b/platform/ports//posix/CMakeLists.txt
 index bf54445..fbf3219 100644
---- a/platform/source/posix/CMakeLists.txt
-+++ b/platform/source/posix/CMakeLists.txt
+--- a/platform/ports/posix/CMakeLists.txt
++++ b/platform/ports/posix/CMakeLists.txt
 @@ -2,13 +2,6 @@ include( CheckCCompilerFlag )
  include( CheckTypeSize )
  include( CheckFunctionExists )
@@ -58,16 +43,19 @@ index bf54445..fbf3219 100644
  list( APPEND REQUIRED_POSIX_FUNCTIONS
        clock_gettime time localtime_r strftime timer_create timer_delete
        timer_settime pthread_create pthread_attr_init pthread_attr_setdetachstate
-@@ -82,4 +75,4 @@ add_library( iotplatform
- set_target_properties( iotplatform PROPERTIES VERSION ${PROJECT_VERSION} )
+@@ -90,7 +75,7 @@ add_library( iotplatform
+                 ${PLATFORM_SOURCES} )
+
+ # Set the dependencies of this platform layer.
+-target_link_libraries( iotplatform INTERFACE Threads::Threads rt ${TLS_LIBRARY_LINKER_FLAG} )
++target_link_libraries( iotplatform INTERFACE Threads::Threads ${TLS_LIBRARY_LINKER_FLAG} )
  
- # Link required libraries.
--target_link_libraries( iotplatform Threads::Threads rt ${TLS_LIBRARY_LINKER_FLAG} )
-+target_link_libraries( iotplatform Threads::Threads ${TLS_LIBRARY_LINKER_FLAG} )
-diff --git a/platform/source/posix/iot_network_openssl.c b/platform/source/posix/iot_network_openssl.c
+ # Set platform sources in the parent scope for directory organization.
+ set( PLATFORM_SOURCES ${PLATFORM_SOURCES} PARENT_SCOPE )
+diff --git a/platform/ports/posix/source/iot_network_openssl.c b/platform/ports/posix/source/iot_network_openssl.c
 index da804ef..44d6af5 100644
---- a/platform/source/posix/iot_network_openssl.c
-+++ b/platform/source/posix/iot_network_openssl.c
+--- a/platform/ports/posix/source/iot_network_openssl.c
++++ b/platform/ports/posix/source/iot_network_openssl.c
 @@ -36,7 +36,7 @@
  
  /* POSIX includes. */
@@ -77,13 +65,12 @@ index da804ef..44d6af5 100644
  #include <pthread.h>
  #include <signal.h>
  #include <sys/ioctl.h>
-@@ -44,6 +44,9 @@
- /* Sockets includes. */
+@@ -45,6 +45,8 @@
+ #include <arpa/inet.h>
  #include <netdb.h>
  #include <sys/socket.h>
 +#include <netinet/in.h>
 +#include <netinet/ip.h>
-+#include <arpa/inet.h>
  
  /* OpenSSL includes. */
  #include <openssl/err.h>
