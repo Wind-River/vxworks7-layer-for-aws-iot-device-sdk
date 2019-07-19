@@ -1,8 +1,8 @@
-Index: https...github.com.aws.aws-iot-device-sdk-embedded-C/platform/source/posix/iot_network_openssl.c
+Index: https...github.com.aws.aws-iot-device-sdk-embedded-C/platform/ports/posix/source/iot_network_openssl.c
 ===================================================================
---- https...github.com.aws.aws-iot-device-sdk-embedded-C.orig/platform/source/posix/iot_network_openssl.c
-+++ https...github.com.aws.aws-iot-device-sdk-embedded-C/platform/source/posix/iot_network_openssl.c
-@@ -208,10 +208,15 @@ static int _dnsLookup( const IotNetworkS
+--- a/platform/ports/posix/source/iot_network_openssl.c
++++ b/platform/ports/posix/source/iot_network_openssl.c
+@@ -207,10 +207,15 @@ static int _dnsLookup( const IotNetworkS
      struct addrinfo * pListHead = NULL, * pAddressInfo = NULL;
      struct sockaddr * pServer = NULL;
      socklen_t serverLength = 0;

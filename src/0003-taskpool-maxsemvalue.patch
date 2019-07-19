@@ -2,7 +2,7 @@ diff --git a/lib/source/common/iot_taskpool.c b/lib/source/common/iot_taskpool.c
 index 031e7d2..7290573 100644
 --- a/lib/source/common/iot_taskpool.c
 +++ b/lib/source/common/iot_taskpool.c
-@@ -61,7 +61,7 @@
+@@ -55,7 +55,7 @@
  /**
   * @brief Maximum semaphore value for wait operations.
   */
