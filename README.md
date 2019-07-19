@@ -102,9 +102,15 @@ The test sample is provided in the AWS IoT SDK as *demos/source/iot_demo_mqtt.c*
         wrtool prj lib add '-lnet' myRTP
         wrtool prj lib add '-lOPENSSL' myRTP
         wrtool prj lib add '-lHASH' myRTP
-        wrtool prj lib add '-liotcommon' myRTP
-        wrtool prj lib add '-liotplatform' myRTP
+        wrtool prj lib add '-lawsiotcommon' myRTP
+        wrtool prj lib add '-liotbase' myRTP
         wrtool prj lib add '-liotmqtt' myRTP
+
+   NOTE: For some examples you may also need to add some of the following:
+        wrtool prj lib add '-lawsiotjobs' myRTP
+        wrtool prj lib add '-lawsiotshadow' myRTP
+        wrtool prj lib add '-lawsiotdefender' myRTP
+        wrtool prj lib add '-liotserializer' myRTP
 
 7. Add the macro definitions.
 
